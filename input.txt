@@ -1,0 +1,35 @@
+﻿Source document: 3GPP TR 22.870, "Study on 6G Use Cases and Service Requirements" (2026).
+Reference: https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=4374
+Use case excerpt: 6.37 — Energy efficiency for AI service
+
+6.37	Use case on energy efficiency for AI service
+6.37.1	Description
+AI services deliver transformative value across industries by enabling data driven decision automation, predictive analytics, and cognitive process optimisation, particularly in smart manufacturing, precision healthcare, and autonomous transportation systems.
+Climate change and the rising consumption of energy motivate increased energy efficiency. Energy efficiency is a strategic priority for operators around the world. However, AI services inherently consume significant resources. AI training demands high-performance computing clusters, and inference requires continuous processing power.
+Studying the energy consumption for AI services is critical. It enables operators to quantify the energy usage of each AI task, facilitating management of computing nodes with varying efficiency. This empowers dynamic optimisation strategies to reduce AI services related energy waste, improve resource utilisation, and accelerate progress toward a sustainable, low-carbon society.
+6.37.2	Pre-conditions
+There are several AI computing nodes deployed in the network, which can provide computing resources for AI inference and AI training.
+The network can calculate energy consumption information for an AI task.
+The 3rd party entity has sustainability requirements for AI tasks.
+6.37.3	Service Flows
+1.	A 3rd party entity needs an AI model for autonomous driving, but it lacks model training capability. To meet the sustainability requirement, the 3rd party also concerns about the energy consumption for the AI model training task. The 3rd party then initiates an AI model training request to the network, requiring model training and the energy consumption information.
+2.	Based on the request received from 3rd party, the network retrieves the profile of the computing nodes (computing capabilities, energy consumption information) available for the AI training task.
+3.	The network identifies three available computing resources:
+    • Node A: 90 % renewable energy, 10 % conventional energy, medium energy consumption;
+    • Node B: 50 % renewable energy, 50 % conventional energy, medium energy consumption; and
+    • Node C: 20 % renewable energy, 80 % conventional energy, high energy consumption.
+To minimise carbon emissions, the network selects Node A, which has highest clean energy ratio and moderate consumption.
+4.	The network delivers the AI training task to Node A and requests contextual parameters (e.g. computing resources, data volume, etc.) for energy consumption monitoring.
+5.	Node A completes the AI training task and returns both the trained AI model and contextual parameters to the network. The network calculates total energy consumption for the AI model training task based on the received computing resources consumption and data volume.
+6.	The network sends the trained AI model and its energy consumption information to the 3rd party entity.
+6.37.4	Post-conditions
+Based on the trained AI model, the 3rd party entity can achieve AD. With the information received from the network, the 3rd party entity can meet the sustainability requirement.
+6.37.5	Existing features partly or fully covering the use case functionality
+In clause 6.15a of TS 22.261 [14], the following requirements of Energy Efficiency as a Service Criteria are captured:
+Subject to operator's policy and agreement with 3rd party, the 5G system shall be able to monitor energy consumption for serving this 3rd party.
+Subject to operator's policy and agreement with 3rd party, the 5G system shall be able to expose information on energy consumption for serving this 3rd party.
+In above requirements, the information considered only relates to the use of the communication service [14]. The information related to AI services (e.g. AI inference, AI training) is not taken into consideration.
+6.37.6	Potential New Requirements needed to support the use case
+[PR 6.37.6-1] Based on operator's policy and agreement with 3rd party, the 6G network shall support monitoring energy consumption for an AI service (e.g. inference) requested by 3rd party.
+[PR 6.37.6-2] Based on operator's policy and agreement with 3rd party, the 6G network shall support exposing energy consumption information of an AI service to 3rd party.
+[PR 6.37.6-3] Based on operator's policy and agreement with 3rd party, the 6G network shall support a mechanism to assist in selecting computing resources inside Service Hosting Environment for AI service considering requirement of the 3rd party.

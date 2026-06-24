@@ -1,0 +1,407 @@
+6	AI
+6.1	General
+As described in ITU-R recommendations under in [27], AI is considered as a foundational pillar for 6G systems capable of providing services for intelligent applications, and serving the environmental, social and economic 6G drivers. In the context of AI-driven 6G systems, it is anticipated that two concepts will be important for shaping the future systems: AI for 6G System and 6G System for AI. 
+AI for 6G System refers to the use of AI capabilities to support the network and devices in providing 3GPP services. 
+6G System for AI focuses on how the system supports and enables AI applications by leveraging 6G system functionalities to provide different services. 
+Use cases under this subclause are aiming to identify the service requirements for these two concepts.
+6.2	Use case on optimizing 6G infrastructure utilisation via resource exposure in 6G
+6.2.1 	Description
+With the advent of advanced technologies such as Generative Artificial Intelligence (Gen AI), Large Language Models (LLMs), and AI-accelerated xPUs, more applications based on AI can utilise wireless network of operators which are now equipped with substantial computational and storage infrastructures that often remain underutilised in the deployed edge data centres. These computation resources may be hosted at edge sites in a distributed manner, as illustrated in Figure 6.2.1-1. It is in the strategic interest of these operators to provide and expose availability of these dormant resources to a third-party, allowing them to leverage the computational power and AI capabilities when required. In exchange, operators can monetize these assets by charging nominal fees for offered computing resources (e.g. computing cycles) from the edge data centres at the 6G infrastructure. For instance, AI applications may demand extensive computing resources for processing the training data as well as for inferencing (for instance for task offloading, while performing LLM training or inference) and storage utilisation by third parties.
+This approach not only generates additional revenue streams for network operators but also ensures the optimal utilisation of existing infrastructure. Consequently, it justifies the need for new requirements in 6G networks to expose and manage these resources effectively. By incorporating standardised interfaces, robust security protocols, and advanced resource management frameworks, 6G can facilitate efficient and secure access to these resources. This transformation would position 6G networks as comprehensive platforms for hosting in operator's edge data centres distributed computing and AI services for third-parties, aligning with the evolving demands of the technology landscape and providing resources as a service. This unique network-aware resource exposure capability is enabled by the 6G system's centralised policy framework. 
+The 6G system will be built on the cloud, optimised for ubiquitous computing, and natively provide computing services (e.g. in forms of infrastructure services, platform services, and software services) [2].
+ 
+NOTE:	The figure above is just an illustration to depict where computation resources could be deployed e.g. at an edge site.
+Figure 6.2.1-1: Illustration of edge data centre resource usage and exposure to 3rd party
+6.2.2	Pre-conditions
+Network Operator A is equipped with significant compute, storage, and AI processing resources in deployed edge data centres. Some of these resources are used by NFs, OAM, hosted services etc. However, resource utilisation varies based on the actual utilisation by the hosted applications, network load, and during periods of low demand often at certain times of day or night up to 40 % of these resources remain idle. These idle resources represent untapped potential, lying unused with no opportunity for additional utilisation.
+Meanwhile, Operator A's customer, a gaming company called X, experiences high demand for computational resources during nighttime hours when many gamers are online on both computers and mobile devices. As games become increasingly complex and distributed, companies like X are integrating LLMs into their platforms to enhance gameplay. Offloading some of this processing to external infrastructure would be beneficial, particularly if X could access these idle resources at a competitive rate. Being an existing customer of Operator A, company X could potentially secure these resources at favourable rates. However, some time and area-based restrictions may apply, so if users are requesting these computational resources during a time of day that compute resources are scarcer or outside a designated area, the offloading may not take place.
+Company X (or another company Y) also offers lightweight augmented reality glasses, and would also like to make use of the above mentioned computational resources of Network Operator A to be able to perform higher quality image processing and real time analysis of the camera images capturing the scene, and provide a responsive experience to the users wearing these lightweight augmented reality glasses, and offload some AI and/or other computational tasks in order to save battery power (assuming running workloads on UE will drain the battery much faster). Each of these UEs have subscription from 6G network to use these computational resources.
+6.2.3	Service Flows
+1.	A third-party requests access to specific xPU (GPU, CPU etc.) or AI resources via an API provided by Operator A. These requests may include information about a desired time period of the day (e.g. a few hours at night). an area in which its devices are deployed, and a desired QoE. Similarly, an (application on the) UE can request making use of computational resources to offload computational tasks.
+2.	The 6G network verifies the request against defined policies and authorises access if conditions are met.
+3.	The 6G network checks with the policy framework, which in turn may confirm with orchestration system if sufficient resources are available for the expected duration based on the third-party request, by potentially leveraging the available information on the history of network usage. Upon approval, the 6G system allocates the requested resources and establishes secure access for the third-party. This unique network-aware resource exposure capability is enabled by the 6G system's centralised policy framework.
+4.	The operator could also add its own rules and policy to manage the resource allocation with the help of policy framework.
+5.	The system continuously monitors resource usage and records data for charging and reporting purposes.
+6.	The 3rd party is also allowed to analyse the usage in real time.
+7.	The 6G system schedules the available computational resources amongst UEs (e.g. AR glasses) of the different gamers taking into account the requested time period, area, QoE, and the mobility of the UEs. 
+8.	Given that some of the UEs (e.g. AR glasses) are moving around, the 6G network offers efficient ways to transfer/handover a computational task from one computational resource to another computational to meet the requested QoE.
+6.2.4	Post-conditions
+1.	3rd party entity completes its tasks using the allocated resources.
+2.	The 6G network releases the resources and updates the availability status in real time.
+3.	Usage data is logged, and relevant charges are generated and sent for billing.
+4.	Policy function is in control of entire operation.
+6.2.5	Existing features partly or fully covering the use case functionality
+None.
+6.2.6	Potential new requirements needed to support the use case
+[PR 6.2.6-1] Based on operator's policy, the 6G network shall provide suitable means to allow authorised third parties and/or UEs to retrieve availability information about computational resources (e.g. storage, AI processing units, xPUs information etc.) inside the Service Hosting Environment and to utilise these computational resources for running workloads on demand.
+[PR 6.2.6-2] The 6G network shall support charging for the usage of network resources by third parties. 
+[PR 6.2.6-3] The 6G network shall support detailed monitoring and reporting of computational resource usage in the Service Hosting Environment. 
+[PR 6.2.6-4] Based on operator's policy, the 6G network shall support efficient ways to transfer a computational task from one computational resource of the Service Hosting Environment at one location to another computational resource of the Service Hosting Environment at another location, based on the mobility of UEs and the desired performance requirements.
+6.3	Use case on end-to-end AI for connected cars
+6.3.1	Description
+The proposed use case aims to enhance the in-vehicle user experience by leveraging AI technologies to provide contextually aware and seamless services for drivers and passengers. Current AI systems such as LLMs and AI Agent have their advanced capabilities to understand driver intentions by considering various situational contexts, including external environmental factors, subjective user inputs such as tone of voice, conversation history, and the ability to make inferences and take actions autonomously. Through this sophisticated understanding, LLMs have the potential to significantly improve vehicle operations and enhance user interactions.
+The deployment of AI based services within the connected car environment presents several challenges due to the substantial computational, memory, and storage resources they require. To address these demands efficiently, a tiered approach is proposed (Figure 6.3.1-1), utilising in-vehicle AI, edge AI, and cloud AI collaboratively:
+•	In-vehicle AI: Deployed directly within the vehicle, in-vehicle AI systems are designed to manage essential operations and simple conversations and interactions concerning driving or vehicle settings. This localized AI operates independently of network connectivity, ensuring zero latency and real time responsiveness for basic user requests.
+•	Edge AI: AI servers deployed in 3GPP operator's edge data networks such as Service Hosting Environment offer to AI systems more substantial computational capabilities. These systems are suitable for deploying more powerful models, such as multi-modal LLMs, which require greater processing power and can deliver advanced features with minimal latency. Edge AI serves as an intermediary by balancing resource availability and minimising latency while handling more complex AI tasks than in-vehicle AI systems.
+•	Cloud AI: Cloud AI systems have vast computing resources, enabling them to execute highly sophisticated and resource-intensive tasks. Although cloud AI is subject to higher communication latency, it is ideal for providing non-real time services and executing collaborative functions within a retrieval augmented generation (RAG) architecture, thereby expanding the scope and depth of available services.
+ 
+Figure 6.3.1-1: End-to-End AI for connected cars
+In-vehicle AI, edge AI, and cloud AI are orchestrated to operate in harmony, adapting dynamically to user requests, network connectivity, network congestion, latency conditions and etc. This collaborative, end-to-end AI framework ensures that users receive seamless and contextually enriched services, harmonizing AI deployment to optimise resource utilisation and ensure high-quality user experience in diverse driving scenarios. 
+This integrated approach suggests the criticality of intelligently managing resource distribution across the three AI layers to ensure the AI services are provided in the most timely and context-appropriate manner.
+6.3.2	Pre-conditions
+•	User A is driving a car equipped with the necessary hardware and software to support AI-based services.
+•	The vehicle hosts a local agent service capable of interacting with User A through voice, enabling hands-free operation and communication.
+•	The car is registered with Operator A's network.
+6.3.3	Service Flows
+1.	While driving, User A utilises the in-vehicle local agent by posing a question about a newly encountered landmark, such as "What is this mountain in front of me?"
+2.	Recognizing the need for image analysis, the local agent assesses its capabilities and identifies that the in-vehicle AI lacks image recognition functionality. Consequently, it finds an Edge AI system (with multi-modal LLMs or AI Agent deployed/hosted) via Operator A's network which can provide image recognition service.
+3.	The on-board camera data capturing the image of the landmark is transmitted to the AI system in Edge AI. Utilising its advanced image recognition capabilities, the Edge AI system processes the data and returns a result to the local agent with minimal latency, identifying the landmark as "Mount Fuji."
+4.	Equipped with the recognition result, the local agent delivers a concise and informative introduction about Mount Fuji to User A, enhancing his driving experience.
+5.	Intrigued by the brief introduction, User A expresses a desire to arrange a tour of Mount Fuji to the local agent.
+6.	The local agent proceeds to collaborate with the cloud AI system to facilitate the tour arrangement. The cloud AI system accesses and synthesizes various data sources, including tour availability and User A's schedule, while interacting seamlessly with both the Edge AI system and local agent to gather additional context, such as User A's position history and preferences. The cloud AI system identifies a two-hour free window in the afternoon suitable for the tour and assembles the necessary itinerary and travel details.
+2.	The local agent conveys the proposed tour itinerary and details to User A. Based on the information provided, User A confirms their decision to attend the tour of Mount Fuji in the afternoon.
+6.3.4	Post-conditions
+User A enjoys the tour of Mount Fuji.
+6.3.5	Existing features partly or fully covering the use case functionality
+General edge functionalities have been specified in TS 23.548 [137] and TS 23.558 [52]. However, AI-driven dynamic interactions and seamless integration across different AI deployment are not considered.
+AI/ML related requirements have been discussed during Releases 18 and 19. Current AI/ML specification (TS 22.261 [14] clause 6.40) focuses on AI/ML operation splitting between AI/ML endpoints and AI/ML model/data distribution and sharing over 5G system. So, the related requirements are mainly about the transfer of AI-ML models and data. The requirements of this use case are about providing computational resource for AI services which is not covered in current specification.
+6.3.6	Potential New Requirements needed to support the use case
+[PR 6.3.6-1] The 6G network shall be able to provide computing resource in the Service Hosting Environment for AI services.
+6.4	Use case on system performance optimisation using AI 
+6.4.1	Description
+	This use case address optimisation of communication between terminals and network through implementing and using the AI capabilities for the communication system network functions (AI-enabled). These AI-enabled communication system functions are responsible for the enhancement of communication system operations and functionalities, such as traffic prediction, resource allocation and planning, based on the available knowledge about the individual end users' behaviour.
+	End users' behavioural context may be gathered both at the device and at the network and used in a complementary fashion to optimise communication. For example, the network may use historical information from location updates and location measurements to infer the user's current position and environmental conditions. Additionally, by leveraging AI capabilities in the UE, the UE may identify scenarios where current and future location information are available and useful may provide this information to the network. The combined user location information from the UE and network can then be used to improve communication efficiency and deliver user experience for 6G services.
+	For instance, in the context of registration and mobility management, the usage of AI capabilities by the communication system functions involved in performing these processes, will enable:
+
+•	the prediction of UE behaviour, based on UE type, historical data and mobility patterns, enables NFs to allocate/plan resources more efficiently, and enforce appropriate policies (e.g. control the frequency of periodic registration updates), which will result in optimizing the process 
+•	set the location tracking parameters based on UE mobility patterns (e.g. reduce signalling for low mobility).
+•	help to resolve issues related to service operations and improve network reliability. 
+•	analysing the real time data, to make decisions and adjust the registration and paging parameters (e.g. the user changed the expected location). 
+6.4.2	Pre-conditions
+	Recently, the number of activities that do not involve movement, such as studying and working remotely, has increased. For such scenarios, the network should optimise the location registration when the UEs do not change location and stay in a specific area for a long time. 
+	In scenarios where the user location may be different from its typical pattern and predictable ahead of the time, the UE could provide such information to the network.
+6.4.3	Service Flows
+	In order to reduce resources and traffic for such users, by using AI-enabled NFs in the core network, the optimisation can be achieved as follow:
+1.	the AI-enabled network functions analyse the behaviour of the UE registered to the network using the historical available data. 
+2.	based on the UE locations during the day, e.g. if the user works from home, the network functions can decide to reduce the frequency of sending the periodic location updates for this UE.
+3.	the network applies the new parameters selected/set to communicate with the UE. 
+4.	Even though the user typically works from home, today, the user has a customer meeting at 3 p.m. at a downtown location and needs to take the metro train to get there. With on-device AI, the UE identifies this as an atypical event (and likely not reflected in historical location information available at network per step 1), so the UE notifies the network. By taking the user's future location plans into account, throughout the day, the network can set location tracking parameters appropriately. 
+5.	In certain cases, the UE may not be able to share user location information with the network due to privacy considerations or rapid changes in location. However, the UE can still collaborate with the network in setting location-related parameters. This can be done via the UE recommending parameter settings to the network, or the network may provide a range of parameters to the UE and based on its AI capabilities and user context, the UE may select a desired option. Ultimately, the network and UE would collaborate to select the appropriate location parameters that support the communication service efficiently.
+6.4.4	Post-conditions
+	By leveraging AI capabilities at the network and UE, the communication system operations and functionalities are optimised without compromising promised quality or impacting services.
+6.4.5	Existing features partly or fully covering the use case functionality
+	None. 
+6.4.6	Potential New Requirements needed to support the use case
+[PR 6.4.6-1] Based on operator's policy, the 6G system shall support AI capabilities.	
+NOTE:	Example of AI capabilities is the system ability to predict the UE behaviour (based on UE type, historical data, mobility patterns, etc.) and use that for the allocation and planning resources efficiently.
+[PR 6.4.6-2] Based on operator's policy, the network entities supporting AI capabilities shall be able to collaborate upon request.
+[PR 6.4.6-3] Based on operator's policy, regulatory requirements and subscriber permission, the 6G system shall be able to support mechanisms (e.g. AI capabilities in the network and UEs) allowing the network and UEs to negotiate communication parameters for a communication service.
+6.5	Use case on personalised AI for health monitoring.
+6.5.1	Description
+A wearable health monitoring device (e.g. a smartwatch or fitness band) collects biometric data, such as heart rate, oxygen saturation, and body temperature. The device needs to analyse this data and provide real time health insights. This analysis may be based on an AI model personalised for the user, which is tailored to the user's medical history and current activity level.
+6.5.2	Pre-conditions
+A user possesses a health monitoring device (UE) capable of collecting real time biometric data, e.g. heart rate, oxygen saturation, body temperature, etc. The device is also capable of communicating with the 6G network.
+6.5.3	Service Flows
+1.	A user engages in a workout session while wearing the health monitoring device (UE).
+2.	The UE collects real time biometric data and notices irregular patterns in the user's heart rate.
+3.	The UE creates a compute task to analyse the irregular heart rate. The compute task could comprise a personalised AI model that will predict whether the irregularity indicates stress, dehydration, or a potential medical issue and will generate recommendations for the user, e.g. "Take a break" or "Drink water" or "Consult a doctor".
+4.	The compute task will take a long time if executed locally in the UE, or it may be even infeasible to be locally executed due to limited resources in the UE. Hence, the UE requests from the 6G network to execute the compute task. 
+5.	For this purpose, the UE may provide the executable code, recent (anonymized) heart-rate measurements, and execution requirements, such as latency requirements indicating how fast the results should be provided. Such requirements can be used by the 6G network to allocate the appropriate resources for the compute task execution.
+NOTE:	If the user heart-rate measurements are provided to the network, they should be anonymized to fulfil privacy requirements. In addition, the UE might request subscriber permission before sharing these measurements. 
+6.	The UE receives the results of the compute task execution from the 6G network. The results may contain actionable insights, such as "Consult a doctor" or "Take a break" or "Drink water."
+6.5.4	Post-conditions
+The UE alerts the user using the received actionable insights. 
+6.5.5	Existing features partly or fully covering the use case functionality
+N/A
+6.5.6	Potential New Requirements needed to support the use case 
+[PR 6.5.6-1] Subject to regulatory requirements and subscriber permission, the 6G system shall support mechanisms to execute compute tasks in the Service Hosting Environment upon service request from UEs.
+[PR 6.5.6-2] Subject to regulatory requirements and subscriber permission, the 6G system shall support mechanisms that enable a UE to specify when a compute task should be executed (e.g. immediately, periodically, etc.) in the Service Hosting Environment.
+[PR 6.5.6-3] Subject to regulatory requirements and subscriber permission, the 6G system shall support mechanisms that enable a UE to specify requirements for a compute task in the Service Hosting Environment, such as an overall latency indicating how fast the results of the compute task should be provided.
+6.6	Use case on 6G AI Agent collaboration with third-party AI using LLM
+6.6.1 	Description
+AI Agents play a crucial role in modern telecommunications by enabling intelligent automation, decision-making, and adaptive network management. These agents are software-driven entities that leverage artificial intelligence, including machine learning and natural language processing, to interact with users, applications, and network components. In a 6G environment, AI Agents enhance network efficiency by dynamically optimizing resources, predicting network conditions, and facilitating providing seamless communication between services. By integrating LLMs, AI Agents can understand complex requests, translate them into actionable insights, and orchestrate 3GPP services (e.g. communication service, sensing service, AI-related) network capabilities and functions autonomously, ultimately improving user experience when consuming the 3GPP services, operational efficiency, and service innovation. [80]
+In this use case, a third-party application (e.g. a smart city traffic management system) AI Agent sends a text-based request or query to the 6G network. The request is processed by an AI Agent in the 6G network that leverages LLMs and the network's advanced capabilities (e.g. sensing, real time data processing, telemetry, analytics, and others) to provide a response or perform an action. This interaction mimics how users interact with chatbots like ChatGPT®, but it is tailored for network-specific tasks and applications.
+NOTE:	ChatGPT® is an example of a suitable product available commercially. This information is given for the convenience of users of the present document and does not constitute an endorsement by 3GPP of this product.
+The 6G network AI Agent acts as an intelligent intermediary, interpreting the text-based request, gathering necessary data, and returning a response or executing a task. Several unique aspects are highlighted on how the 6G network AI Agent responds to third-party AI Agents' intents. In particular, the 6G network AI Agent can invoke multiple internal capabilities (e.g. sensing, analytics, and exposure) based on operator policies. The 6G network can also invoke authorised external 3rd party capabilities to enhance or complement the results of internal capabilities to achieve more relevant and specific business objectives. Unlike traditional service activation, the 6G network AI Agent may fulfil the request by generating insights or recommendations (e.g. traffic mitigation strategies) and securely exposing them to the users.
+6.6.2 	Pre-conditions
+The third-party application (e.g. smart city traffic management system) has access to 6G network's AI Agent services.
+The 6G network has deployed LLM-based AI Agents capable of understanding and processing natural language queries.
+The 6G network has access to real time data sources (e.g. traffic sensors, weather data, network performance metrics) to fulfil the requests.
+The 6G network also has access to authorised 3rd party services (e.g. map service, navigation service, traffic policy generator) to assist handling the requests.
+The third-party application and the 6G AI Agent have established secure communication channels (e.g. authenticated APIs or message brokers).
+The 6G network supports edge computing to process requests locally and reduce latency.
+6.6.3 	Service Flows
+Operator R, which operates a 6G network, provides sensing-based services to authorised third parties, such as a smart city authority. Instead of deploying its own sensors (e.g. cameras and other monitoring equipment) to detect traffic conditions, the smart city can procure these services from Operator R.
+Additionally, Operator R can enhance these sensing-based services by integrating advanced analytics, such as UE mobility patterns. This enriched information is then made accessible to authorised third parties through AI Agent(s), enabling optimised urban management and smarter decision-making.
+Moreover, the 6G network under the administration of Operator R is able to interpret a received intent (e.g. road traffic congestion diagnosis, road traffic flow optimisation). Depending on operator's policy, the network can invoke multiple service components leveraging conventional network procedures or APIs—such as sensing to retrieve real time road traffic data, connectivity to collect information from user equipment, data processing (e.g. through analytics or AI-based reasoning to determine the cause of congestion and generate recommendations), and providing the results to the third-party in a suitable format.
+The third-party AI Agent (e.g. Smart city traffic controller) sends a request to the 6G network AI Agent. For example:
+"Why is the traffic congested on Highway A, and what adjustments can be made to optimise traffic flow?"
+The 6G network's AI Agent receives the request and uses an LLM to interpret the query. The LLM breaks down the request into two parts:
+Part 1: Retrieve the current traffic congestion level on Highway A.
+Part 2: Provide recommendations for optimizing traffic flow.
+The AI Agent queries real time data sources (e.g. sensing infrastructure, etc.) to gather the current traffic congestion level on Highway A. The AI Agent can also invoke authorised 3rd party services (e.g. map or navigation services) to help locate the congestion point faster, cross-check with the sensing result, and provide more comprehensive view of the traffic flow on Highway A.
+The data gathered is used by the AI Agent to infer and thus generate analytics insights to determine that Highway A is experiencing high congestion due to an accident. The data may also be used to update (improve) the LLM at the AI Agent, e.g. self-learning capability of AI Agent.
+Based on the analysis, the AI Agent generates traffic optimisation recommendations, such as:
+Increasing green light duration on alternate routes.
+Reducing green light duration on Highway A to divert traffic.
+Deploying dynamic signage to inform drivers of alternative routes.
+The recommendations can be generated by the AI Agent itself, or through invoking authorised 3rd party capabilities such as an AI based traffic policy generator.
+These recommendations are sent to the third-party AI Agent managing the smart city infrastructure.
+The AI Agent generates a response to the third-party AI Agent:
+"Highway A is currently experiencing high congestion due to an accident. Recommended actions include adjusting traffic light durations on alternate routes and deploying dynamic signage to inform drivers. Expected congestion reduction in 10 minutes."
+The response is sent back to the third-party application, which displays it to the user (e.g. a traffic management controller or city official) or uses it for further decision-making. The final implementation of the recommendations remains under the control of the third-party AI Agent or human operators.
+In addition, the third-party application sends another request to the 6G network AI Agent. For example, "I need the most reliable network service that you can offer in order to connect all traffic lights in the city."
+For such request the 6G network's AI Agent queries the information on available mobile network capabilities and identifies the mapping between the request and available mobile network services that can be configured or updated (e.g. network slices dedicated for connectivity between traffic lights). Furthermore, once the new related services become available (e.g. due to the network upgrade) that match smart city requirements on connectivity, the 6G network's AI Agent can send an intent related to newly available service by advertising such services and offering them for trial. 
+Then the 6G network's AI Agent indicates to the third-party AI Agent managing the smart city infrastructure that the reliable connectivity request could be fulfilled and under which monetary implications. If the third-party AI Agent answers positively (including automatically based on a cost threshold) the requested connectivity is established. The same can apply to any connectivity service matching the third-party AI Agent needs that is advertised by the 6G AI Agent, once it receives the confirmation from the third-party AI Agent to enrol in the service or its trial.
+The interaction between 6G network's AI Agent and the third-party AI Agent is illustrated in Figure 6.6.3-1. 
+ 
+Figure 6.6.3-1: Illustration of 6G network AI Agent communication with 3rd party AI Agent
+6.6.4 	Post Conditions
+The third-party application receives the response and takes appropriate action (e.g. notifying city officials or updating a public traffic dashboard).
+The traffic light optimisation reduces congestion on Highway A.
+The smart city gets always the best possible connectivity services matching its needs.
+The 6G AI Agent logs the request, response, along with any additional contextual meta data for future reference (e.g. memorisation capability of AI Agent) and continuous improvement of the agent's underlying LLM.
+6.6.5	Existing features partly or fully covering the use case functionality
+None.
+6.6.6	Potential new requirements needed to support the use case
+NOTE 1:	The mention of AI capabilities such as AI Agent does not imply or preclude any architecture assumption or solution.
+[PR 6.6.6-1] Based on operator's policy, the 6G network shall be able to support secure means to expose its services to the authorised third-party AI Agent based on its intent. 
+[PR 6.6.6-2] Based on operator's policy, regulatory requirements and subscriber permission, the 6G network shall be able to take into account information related to user mobility context, subscription information when invoking 3GPP services based on received intent(s) from the user.
+[PR 6.6.6-3] Based on operator's policy, regulatory requirements and subscriber permission, the 6G network shall support mechanisms (e.g. AI capabilities such as AI Agent) to send intent(s) related to 3GPP services towards a third-party AI Agent (e.g. proactively or in response to a received intent), also taking into account information related to user mobility context, subscription information.
+[PR 6.6.6-4] Based on operator's policy, the 6G network shall support mechanisms (e.g. AI capabilities such as AI Agent) to provide multiple 3GPP services, in response to received intent(s) (e.g. from a third-party AI Agent).
+[PR 6.6.6-5] Based on operator's policy, the 6G network shall support mechanisms (e.g. AI capabilities such as AI Agent) to invoke authorised 3rd party capabilities, when providing 3GPP services based on received intent(s) from the user.
+NOTE 2:	The authorised 3rd party capabilities help to enhance or complement the results of internal capabilities to achieve more relevant and specific business objectives.
+6.7	Use case on AI Agents communication
+6.7.1	Description
+Autonomous agents (AI Agents) have long been recognized as a promising approach to achieving artificial general intelligence (AGI), which is expected to accomplish tasks through self-directed planning and actions [81]. In recent years, leveraging the capabilities of LLMs, these agents, are expected to effectively perform diverse tasks in social science, natural science, and engineering, among others. AI Agents can take on various forms, such as embodied intelligent robots, virtual assistants, and autonomous systems (e.g. drones). 
+AI Agents have different attributes, such as different capabilities, resources, etc. For example, paper [148] classified AI Agents based on their techniques and capabilities, whereas paper [149] classified AI Agents based on their performance, generality, and autonomy.
+Multiple AI Agents could collaborate through natural language conversations to complete the tasks [82], which abstract multiple roles to supervise task process.
+As communication serves as a common mechanism for sharing information, we can foresee that in the future, there will be more and more users and their AI Agents that need to be supported. A group could be established for users and their AI Agents to communicate with each other. To complete a complex task involving multiple users and triggered by a user, an AI Agent or an application, communication "domain" for multiple groups could be established, the users and AI Agents working for the same task can be explicitly identified by the task requirement or implicitly identified based on location area or relative distance. The communication "domain" could be dynamically created for users and AI Agents from multiple groups to communicate with each other for a specific task during a specific time. Only the AI Agents in the same "domain" could communicate with each other. If authenticated/authorised, users and AI Agents could join this group via various access technologies, including the cellular network, WLAN and Ethernet, etc.
+Coordination (e.g. "who does what and when") amongst members of the same group, and across multiple groups of the same "domain" is crucial to ensure proper accountability of the process and overall fulfilment of the complex task.
+6.7.2	Pre-conditions
+As shown in Figure 6.7.3-1, Grandpa Bob plans to clean the room and host a gathering at home with his daughter Alice's family and his son Charlie's family. So, he issued the command "Clean the room and help me prepare for the family gathering tomorrow afternoon" to his AI-assistant. 
+1) 	Bob has just purchased a home robot and has not connected to the internet.
+2) 	Except for the home robot that Bob just bought, all other AI Agents of users, have been assigned with digital identities associated with the user's identity. 
+3) 	The users' AI-agents involved in this scenario include AI assistant, drone and intelligent vehicle, etc. Intelligent vehicles and drones are connected through cellular networks, while other AI-agents are connected through home WLAN.
+4) 	All AI-agents are registered with the 6G system, so that their attributes are visible for some of the members, based on permission and authorisation.
+6.7.3	Service Flows
+  
+Figure 6.7.3-1: Task-Oriented Multi-Group Communication Network for multiple user AI-agents communication
+1.	Bob, Alice, and Charlie each request the operator to create AI Agent groups for them. They then invite their respective AI Agents, such as their AI assistants, smart cars, drones, etc., to join their individual groups. In other words, there are separate groups for Bob, Alice, and Charlie, allowing the AI Agents within the same group to communicate with each other. In addition to the group owner's information (e.g. authorised related user, etc.), examples attributes for Bob's AI Agent group in this use case are as follows:
+Table 6.7.3-1: Illustrative attributes of AI Agents
+	Service Features	Capabilities	Permission
+AI assistant	•	Service description: (Voice and Text-Based Interaction, Information Retrieval, Personalised Recommendations)
+•	Service area: wide
+•	Moving speed: N/A	WLAN & cellular connection; 
+Tools (Perception + Action); 
+Reasoning & Decision making; 
+Memory + Reflection; 	InvitationAllowed: true;
+DiscoveryAllowed: true
+ShareAllowed: true;
+CreatGroupAllowed: true
+Drone	•	Service description (e.g. Radar, camera, Grasping, navigation); 
+•	Service area: wide
+•	Moving speed: Medium	WLAN & cellular & V2V connection; 
+Tools (Perception + Action); 	InvitationAllowed: true;
+DiscoveryAllowed: true
+ShareAllowed: true;
+CreatGroupAllowed: true
+Intelligent vehicle	•	Service description (e.g. Radar, camera, driver assistance, and improved navigation); 
+•	Service area: wide
+•	Moving speed: High	WLAN & cellular connection; 
+Tools (Perception + Action); 
+Reasoning & Decision making; 
+Sensing;	InvitationAllowed: true;
+DiscoveryAllowed: true
+ShareAllowed: true;
+CreatGroupAllowed: false
+Home robot	•	Service description (e.g. voice interaction, cleaning, security monitoring); 
+•	Service area: Local
+•	Moving speed: Low	WLAN connection; 
+Tools (Perception + Action);	InvitationAllowed: true;
+DiscoveryAllowed: true
+ShareAllowed: true;
+CreatGroupAllowed: true
+
+As Table 6.7.3-1 illustrates, AI Agents vary in their service features, capabilities and permission, etc. This results in different network requirements. For example, an AI assistant might require cloud storage for extensive data storage, while a drone may need network-provided sensing and computing capabilities for obstacle identification.
+2.	The newly purchased home robot joins Bob's group after authentication and is associated with Bob's identity. Then, the home robot reports its capability to the group.
+3.	Bob sends the request to his AI-assistant and requests the AI-assistant to arrange the gathering as task coordinator. The AI-assistant received Bob's request. Based on the local or cloud-based knowledge base, Bob's AI-assistant retrieves the history of past family gatherings, determines the list of sub tasks and distributes the sub tasks to corresponding AI Agents. 
+4.	Bob's AI-assistant communicates with the discovered cleaning robot based on its capabilities and sends the request to the cleaning robot to carry out a full house cleaning. When the cleaning robot needs collaboration from other robots, e.g. to move some heavy furniture, it will setup a cleaning group with others to enable efficient communication within the cleaning group. After the cleaning, the communication group will be released accordingly.
+5.	Bob's AI-assistant communicates with the discovered and selected restaurant's AI assistant by matching the requirements and AI Agents' attributes. Bob's AI-assistant orders food for tomorrow and negotiate the food delivery time and location with restaurant's AI assistant. The restaurant's AI assistant selects a drone based on its capabilities from restaurant's group, to do the food delivery. Then the restaurant's AI assistant sends the determined time and location to the food delivery drone and sends the information of selected drone to Bob's AI-assistant, so that Bob's AI-assistant can communicate with drone. 
+6.	During food delivery, the drone offloads a portion of the computational tasks to the network, to assist it in obstacle identification, by assisting in the process of modal transformation, for example, by pre-processing the images captured by drones, and obtaining alert data. When drone arrives at the pick-up point, they will setup a temporary communication group with the home robot to enable secure and cooperative food delivery. Considering the drone and home are from different vendors, they support different protocols and information modalities, the communication is supported even if the drone and home robot transmit different modality information, e.g. video/text: the 6G network transform the video taken by drone and pick-up point address in text format to semantic maps with guideline marks that the robot can recognize to retrieve the delivery, etc. The communication group will be released after the delivery.
+7.	Bob's AI-assistant communicates with Alice's AI assistant and intelligent vehicle. Bob's AI-assistant negotiates with Alice's AI assistant for the time and place to pick up Alice's and sends the request to the intelligent vehicle to pick up Alice's with negotiation result (i.e. the pick-up time and place). 
+8.	Bob's AI-assistant communicates with Charlie's AI assistant and intelligent vehicle. Bob's AI-assistant negotiates with Charlie's AI assistant for the time and place to pick up Charlie's and sends the request to the intelligent vehicle to pick up Charlie's with negotiation result (i.e. the pick-up time and place). 
+6.7.4	Post-conditions
+1. The cleaning robot cleans Bob's house.
+2. The drone sends the foods from the restaurant to Bob's house.
+3. The intelligent vehicle picks up Alice's and Charlie's and sends them to Bob's house.
+4. Alice, Charlie and Bob have a happy gathering party. 
+6.7.5	Existing features partly or fully covering the use case functionality
+The identification requirements can be partially covered by Personal IoT Networks (PINs) and Customer Premises Networks (CPNs) in TS 22.261 [14], clause 6.38. However, AI Agents have different attributes (e.g. users, capabilities), the 3GPP system is expected to support new identification mechanism to enable the association between AI Agent and user, as well as the association of the AI Agent's own attribute information, enabling more flexible discovery, communication, and collaboration.
+The 5G system shall support mechanisms to identify a PIN, a PIN Element, an eRG and a PRAS.
+Subject to regulatory requirements and operator policy, the 5G system shall support an efficient data path within the CPN for intra-CPN communications.
+The efficient communication and collaboration can be partially covered by 5G LAN-type service, as defined in TS 22.261 [14]. However, the group is generally defined by subscription and managed by operators or authorised 3rd party. Therefore, it cannot satisfy the dynamic requirement from AI Agents which require a certain level of flexibility and autonomy. For instance, for a short term or emergency task, the communication service provided to the group of AI Agents should be established in a relatively short time to match time-efficiency of the task. However, the high time-efficiency requirement is hard to meet by 5G-LAN-type service since it requires lots of manual operations, e.g. LAN configuration, subscription, Data Network Name/Single Network Slice Selection Assistance Information configuration, etc. In addition, it cannot address the interoperability issue between diverse AI Agents. The 3GPP system is expected to enable seamless communication between these diverse AI Agents supporting different protocols with various capabilities.
+5G System supports management of 5G VN Group identification and membership (i.e. definition of 5G VN group identifiers and membership) and 5G VN Group data (i.e. definition of 5G VN group data). The 5G VN Group management can be configured by a network administrator or can be managed dynamically by AF.
+The requirement on supporting the intelligent can be partially covered by AI/ML model transfer in TS 22.261 [14] clause 6.40. The main difference is that AI Agents can operate autonomously, allowing them to communicate with each other without human instructions, resulting in new requirements on security mechanism. These communications are imperceptible to users and can occur between AI Agents on the device side, cloud side, or edge side, resulting to new requirement on flexible communication and coordination mechanism.
+Subject to user consent, operator policy and regulatory requirements, the 5G system shall be able to expose information (e.g. candidate UEs) to an authorized 3rd party to assist the 3rd party to determine member(s) of a group of UEs (e.g. UEs of a FL group).
+Based on user consent, operator policy and trusted 3rd party request, the 5G system shall support a means to authorize specific UEs to transmit data (e.g. AI-ML model data for a specific application,) via direct device connection in a certain location and time.
+Based on user consent, operator policy, and trusted 3rd party's request, the 5G system shall be able to provide means for an operator to authorize specific UEs who participate in the same service (e.g. for the same AI-ML FL task) to exchange data with each other via direct device connection, e.g. when direct network connection cannot fulfil the required QoS.
+Based on user consent, operator policy and trusted 3rd party request, the 5G system shall be able to dynamically add or remove specific UEs to/from the same service (e.g. a AI-ML federated learning task) when communicating via direct device connection.
+6.7.6	Potential New Requirements needed to support the use case
+[PR 6.7.6-1] Based on operator's policy, regulatory requirements and subscriber permission, 6G network shall support trusted network access for 3rd party AI Agent and support a mechanism to expose 3rd party AI Agent's attributes (e.g. related users, sensing capabilities, AI capabilities, service features) to other 3rd party AI Agents.
+[PR 6.7.6-2] Based on operator's policy, regulatory requirements, subscriber permission, and agreement with authorised 3rd party, the 6G network shall be able to support security identification for 3rd party AI Agents provided by authorised 3rd party associated with a user (e.g. AI Agents belonging to a customer).
+[PR 6.7.6-3] Based on operator's policy, regulatory requirements and subscriber permission, 6G network shall support mechanisms for 3rd party AI Agents to provide/register their attributes (e.g. sensing capabilities, AI capabilities, service features, associated authorised users) to 6G network, and discover other authorised 3rd party AI Agents to achieve collaborative tasks. 
+[PR 6.7.6-4] Based on operator's policy and regulatory requirements, the 6G network shall provide means to support efficient and secure communication (including multi-modality exchange) between multiple 3rd party AI Agents on UEs over a target area.
+NOTE 1:	This requirement can apply to 3rd party AI Agents of same users or different users. It is expected that the required communication service would be provisioned in the range of minutes to days, depending on use case. Lower for temporary tasks and higher for long term tasks.
+[PR 6.7.6-5] Based on operator's policy, the 6G network shall be able to support secure means to expose different services, e.g. computing offloading service in Service Hosting Environment, to the authorised third-party AI Agent.
+[PR 6.7.6-6] The 6G network shall provide means to support coordination within and across groups of 3rd party AI Agents to achieve a collaborative task associated with a 3GPP service.
+NOTE 2:	Coordination can facilitate the discovery of attributes and capabilities across the 3rd party AI Agents, the attribution of roles such as a task coordinator/supervisor of the group, the decision to setup another group for a sub task etc.
+6.8	Use case on 6G system assisted AI Agent service
+6.8.1	Description
+AI Agent on devices will be popular in 6G era, due to the fast development on device-based computing power and model light-weighting:
+•	More powerful computing in device side: The near-future processor is expected to support local running of AGI models with up to tens of billions of parameters.
+•	Light-weight AGI model becomes available: AGI models have the characteristics of "cloud-side training and device-side deployment".
+As Figure 6.8.1-1, shows below, the AI Agent device interacts with environment, where the device entity empowered by AI technology (e.g. AGI model) can collect environmental information and local information, make decisions itself, and perform action to affect the environment. It is expected, the 6G system can assist AI Agent device for awareness, decision making and actions in a couple of aspects. 
+ 
+Figure 6.8.1-1: Closed-loop operation for AI Agent service
+Below is the gap analysis that what services provided by 6G system can assist the AI Agent device:
+Apart from the local data in AI Agent device, the information from environment is supplementary for AI Agent to make a highly accurate inference. In 6G system, an efficient way to support environmental information exposure to UE, including:
+•	Sensing information will be useful for AI Agent service. For example, the information surrounding objects is useful for a vehicle to realise the traffic situation in real time and based on which the vehicle can do the corresponding actions such as changing lane and speed.
+•	The real time QoS change information. For example, this planed QoS information can be used for vehicle to change autonomous mode to manual mode when the QoS cannot fulfil the expected latency.
+Though the computing in device will be more powerful, it is still difficult to run the whole AGI model merely relying on the device itself. Thus, task offloading will be needed to realise a "device-network collaboration", in order to make a suitable decision and action. By doing so, 6G network needs to provide some 3GPP services (e.g. Sensing, positioning, text-voice converting, language translation) from 6G network 
+In order to let an AI Agent device perform action without human intervention, the 3GPP network need to authorise the AI Agent device to communicate with other device(s) and/or AS. By doing so, the user centric grouping is needed: one or more AI Agents may belong to the one user, family or an enterprise while the AI Agent functionalities. The SUPI/IMSI may not be properly used to identify an AI Agent, given the AI Agent functionality can be moved from one entity to another. Hence, a digital representation and User ID as well as the corresponding authentication/authorisation is needed.
+Moreover, with the emergence of AI Agent devices, the communication between devices supporting AI capabilities, and the communication between AI Agent device and a network server will be popular. As an example, the communication can be performed in term of "token", which is understood as a "word vector" transformed by AI model based on the human readable data (such as text, image, video) and being embedded into AI model supported in AI Agent. The traffic enables an AI Agent to collaborate with other AI Agents intra/inter an AI Agent group, and/or with the application.
+6.8.2	Pre-conditions
+Bob has a robot nanny as his personal AI Agent, bought from vendor-A. Bob's cell phone is his other personal AI Agent bought from vendor-B. Those AI Agents on device, as personal assistants, can assist Bob with suggestions and actions based on information the AI Agents are aware of.
+6.8.3	Service Flows
+1.	Bob, living in his home in Beijing, decided to go to Sanya for his winter vacation. He asked his robot nanny (AI Agent) to book a 5-star hotel with lowest price.
+2.	The personal assistant began to check the well-known brand hotels in Sanya. As Bob is a VIP in some hotels, and the AI Agent needs to get the VIP price, when the robot nanny tried to login the hotel website, the application checked with 6G network that the AI Agent (Robot nanny) is Bob's valid personal device and the application provided the VIP price to the Robot nanny.
+3.	By collecting a couple of 5-star hotels' price, the Robot nanny finally selected and booked a hotel room with the lowest price for Bob.
+4.	Later-on, when Bob has left home for the airport, he remembers there is a delivery at home that needs to be pick up. Thus, Bob asked the AI Agent on cell phone, via 6G network, to notify robot nanny who is at home to pick up the delivery. Given the two AI Agents are from different vendors, they support different protocols and information modalities, the 6G network helped to interconnect the cell-phone agent with the robot nanny and then transform the "pick-up delivery" command from the cell phone to the pictures with guideline marks that the robot nanny can parse. 
+5.	Robot nanny managed to pick up the delivery. 
+6.8.4	Post-conditions
+Thanks to the 6G network, the AI Agent on device can assist Bob to find the VIP price for booking hotel, and the AI Agents can communicate with each other without "language" barrier.
+6.8.5	Existing features partly or fully covering the use case functionality
+TS 22.261 [14] clause 6.40.2.1 AI/ML model transfer in 5GS
+It provides the requirements about some information exposure to 3rd party applications (such as resource utilisation, Planed QoS parameters, status information of an AI-ML session. 
+TS 22.101 [58] clause 26a User Identity 
+It provides the requirements about User Identities with related User identifier for a user. The User Identifier is different to SUPI/IMSI/MSISDN. It supports user authentication with User Identifiers from devices that connect via the internet.
+TS 22.156 [28] clause 5.2.2 Avatar-based real time communication 
+It provides requirements about digital representation for an Avatar. It is unclear if it can be correlated to an AI Agent.
+6.8.6	Potential New Requirements needed to support the use case
+[PR 6.8.6-1] Based on operator's policy, regulatory requirements and subscriber permission, the 6G system shall provide a suitable means for an AI Agent application on UE to invoke some 3GPP services (e.g. IMS service).
+[PR 6.8.6-2] Based on operator's policy, regulatory requirements and subscriber permission, the 6G system shall provide an efficient way to expose information (e.g. change of QoS) to the application on the UE.
+[PR 6.8.6-3] Based on operator's policy, regulatory requirements and subscriber permission a, the 6G network shall be able to provide a suitable means to support the multi-modal data exchange between the AI Agent applications considering data characteristics.
+6.9	Use case on collaborative AI Agents
+6.9.1	Description
+AI Agents can perform tasks for or represent e.g. devices, persons, drones, or cars. These AI Agents may be either implemented in the UE or in the network. By offloading tasks to the network, devices can save on complexity and energy consumption. Furthermore, an AI Agent in the network can still represent a device, person, drone or car, when that device, person, drone or car is not reachable, e.g. because of radio conditions or battery outage, or due to other triggering conditions, e.g. user request, or limited computing resources on the device. The AI Agent implemented in the UE can also be offloaded into the 6G network. Offloading of AI Agent or/and related tasks can happen towards a local/edge DN/CN network but can also be to a nearby other device with more processing capabilities. 
+AI Agents can be used for many different purposes. In this use case we include an example of an AI Agent for a car, which is communicating with e.g. AI Agents representing the owners of the car and applications for the energy grid. What specific application the AI Agent performs (e.g. personal agent, collision avoidance, booking parking/travel) is not standardised. What should be standardised is the basic functionality needed to support these AI Agents and the collaboration between AI Agents.
+Collaboration between AI Agents requires interoperability between different AI Agents. This interoperability between the AI Agents even needs to be provided when the collaborating AI Agents are implemented in different networks. Supporting interoperability across different networks is a case for standardisation. However, with a huge number of different AI Agents, only the basic interoperability aspects can be standardised. E.g. how to identify an AI Agent, how to authorise access to a different AI Agent and how to establish and maintain secure association between AI Agents.
+AI Agents will follow the device/person/car/drone/etc. they are associated with to nearby edge network locations. One reason is to reduce latency; another reason is to avoid large amounts of traffic travelling long distance through the network. AI Agents may select relevant other AI Agents to collaborate with based on where they are located.
+Sustainability impact analysis: 
+Material resources: AI Agents will require compute resources. On the other hand, offloading device tasks to AI Agents in the network can lead to less complexity in devices.
+Energy resources: Processing AI Agents will imply an increase in the use of energy resources. On the other hand, intelligent applications may incur energy savings in other sectors.
+Inclusion and Equality: Collaborating AI Agents are expected to form an important part of the digital society, e.g. interactions with government, public transport, commerce. It is therefore of great importance that AI Agents are accessible to all.
+Trustworthiness: Privacy and trustworthiness are key for the public acceptance of AI Agents. 
+6.9.2	Pre-conditions
+Husband and wife John and Ann own an electric car. The electric car has an AI Agent that can organise various things for the car. This includes that it can communicate with applications from the energy grid to optimise charging the car. There is a 'spot-price' for electricity that fluctuates with locally available electricity. The price can even be negative if there is more renewable energy produced than can be used. The intelligent agent for the car is provided by the car company. The local networks the AI Agent runs on are determined by contracts the car company has.
+John has a personal AI Agent that amongst others manages his calendar. John gets the subscription for the AI Agent through his corporate employer.
+Also, Ann has a personal AI Agent that manages her calendar and triggers communication service. As Ann is a self-employed consultant, she obtains a subscription for her personal AI Agent from her telecommunications provider. Her AI Agent can either run on her device or be offloaded to the 6G network (SHE/CN).
+The car AI Agent has been authorised by John and Ann to access their personal AI Agents to obtain information about their calendars.
+6.9.3	Service Flows
+1.	John is on a business trip abroad with his car. While he is asleep in a hotel, the car is connected to a charger. The AI Agent for the car runs in an edge network near the car.
+2.	The car AI Agent communicates with a local application for the local energy grid and notices that the price for electricity is particularly high that night in the area of the hotel. There is the possibility to make a profit if the car can actually provide energy from its battery back to the grid. 
+3.	To determine whether it is a good idea to provide energy from the car battery back to the grid, the car AI Agent needs to check whether the car needs to travel far the next day. Rather than calling John and Ann, and waking them up, to get that information, the AI Agent checks the AI Agents from John and Ann to see if any large trips are planned. The AI Agent for John has ported to an edge location at the hotel. The AI Agent for Ann is offloaded and runs in her telecommunications network back at home.
+4.	The personal AI Agent from John indicates that the next day John plans to travel back home, a 900 km journey. It is not a good idea to use the car battery to sell energy back to the grid. 
+5.	In the morning John sees a message from a friend asking him to meet some friends in the pub. The friends (or their personal AI Agents) are not authorised to access calendar information from his AI Agent.
+6.	As John is driving back home, the AI Agent for the car is moved to nearby edge networks following the car's mobility. On the way back, John would like to switch the car to self-driving mode. John's AI Agent checks with the car's AI Agent on when self-driving is possible. The car's AI Agent retrieves data from the network on the areas in its trajectory where the network communication service performance (e.g. latency, bandwidth) allows the agent to safely operate the car.
+6.9.4	Post-conditions
+Information was exchanged between the car AI Agent and the personal AI Agents from John and Ann, even though these AI Agents at that time used computing resources from different providers in different countries. Information was protected against unauthorised access.
+Additionally, information regarding communication service performance has been provided from the 6G network to the AI Agents to enable the collaborative task.
+6.9.5	Existing features partly or fully covering the use case functionality
+3GPP SA6 has specified an architecture for Edge Applications [52] where 3rd party applications can be hosted at the edge. Application mobility into visited networks is also supported. What is not supported are agents for individual devices/persons/cars/drones where it is the device/person/car/drone that offloads compute for specific tasks to the network (or another device). Also, there is no support for interoperability, with authorisation and security, between different applications.
+6.9.6	Potential New Requirements needed to support the use case
+[PR 6.9.6-1] The 6G system shall support hosting large amounts of AI applications (e.g. AI Agent applications) managed and controlled by the 6G network and/or multiple AI Agent applications on a UE.
+[PR 6.9.6-2] The 6G system shall support secure interoperability between AI Agents and between AI Agents and applications to achieve a collaborative task.
+NOTE 1:	Interoperability between AI Agents refers to the ability to discover, authenticate and authorise AI Agents to communicate, exchange data, and work together seamlessly.
+NOTE 2:	Collaborative task refers to an activity, action requiring the involvement of two or more AI Agents. 
+[PR 6.9.6-3] Subject to operator's policy, the 6G network shall be able to provide authorised AI applications (e.g. AI Agents applications) in the UE and in the 6G network) with communication service performance information (e.g. throughput, latency) relevant for their operation, including to achieve a collaborative task.
+6.10	Use case on home robots
+6.10.1	Description
+In 6G era home robots will engage in household chores based on preconfigured models, such as sweeping the floor, vacuuming, folding clothes, washing dishes, and organizing rooms. They will also take care of family members by monitoring health data, reminding family members to take medication, and dialling emergency calls. Additionally, they will socialize and entertain with humans while interacting with other smart devices to create a more intelligent ecosystem. As shown in Figure 6.10.1-1, all of this aims to bring us a more convenient, comfortable, and safe family life. In this use case, not all of the AI inference actions are performed solely by home robots.
+ 
+Figure 6.10.1-1: Home robot performs specific tasks based on pre-trained models
+As shown in Figure 6.10.1-2, the working principle of the robot includes two main components: perceive and action. "Perceive" refers to the process of sensor data from, such as, cameras or radar, for the input to a large model and obtaining perception result. "Action" refers to the process of taking perception result and task as input to a large model and obtaining action parameters to control the joints of the robot to complete the corresponding action. 
+ 
+Figure 6.10.1-2: The perception-action loop of a home robot
+In the case of specific tasks in specific scenarios, the perception model can be deployed locally on the robot as its size is not large. However, for general tasks in open environments, the perception model needs to achieve the perception ability similar to an adult human brain towards the world. Based on psychophysical and neurophysiological studies [281], [282], humans can perceive the gist (e.g. overall meaning) of complex visual scenes within around 150 ms after stimulus onset. This rapid initial perception enables us to grasp the general context of a scene, even if the stimulus is briefly presented (around 10 ms). In the meantime, it takes longer for a human being to identify individual objects, e.g. finer object identification requires larger than 200 ms [283] and around 300 ms [284]. In the target scenarios, robots are expected to have similar perception time as an average human. The number of neurons in an adult human brain is approximately 100 billion, and the current model size for complex logical reasoning and task orchestration in laboratory or limited environments, the model size is also generally on the order of 100 B. Due to cost and size limitations, robots are unable to locally implement perception functions for free and open environments.
+Also, considering that it may exist the situation that to distribute the model to several robots for local inference. When offering services enabled by AI inference, the mobile network also meets the challenge of providing enough computing power within reasonable cost and ensure its end-to-end performance. Therefore, the mobile network system could consider supporting some of these distributed inference techniques, and allow the subscribers to choose and utilise them to improve the service quality.
+For example, in this use case, a robot and the network could negotiate and perform the layer split distributed inference together, i.e. some layers of the model could be performed on the UE, while the others would be offloaded to the network. By using this technique, the UE could run a large model whose computing requirements may be far beyond the capabilities of a typical mobile phone, while protecting the data privacy by making some local data processing.
+The 6G network will be equipped with perception models, enabling it to provide perception services (i.e. 6G network performing AI inference of these models on behalf of robots, to generate the perception) to robots in open environments whenever necessary.
+This use case aims to provide timely perception and action guidance via the 6G network, assisting robots cope with complex real-world environments and providing users with better intelligent services.
+6.10.2	Pre-conditions
+Operator X offers comprehensive 6G services for robots, including communication and AI services. Relevant resources have been deployed in the network to facilitate services like large model inference (e.g. using the AI/ML models are provided by 3rd Party), assisting robots in delivering enhanced performance in complex environments. 
+Lily purchases a robot to assist with various house chores. The robot exhibits a certain degree of local intelligence. By equipping it with one or more advanced models, the robot can better understand the owner's basic needs by controlling its body joints. For example, it can help with household chores, take care of family members' well-being, engage in social interactions and entertainment with humans, as well as interact seamlessly with other smart devices.
+Lily has subscribed to specific 6G services (communication and AI services) for her robot. Therefore, the robot is able to access to 6G services, such as perception service.
+The robot has two perception modes as shown in Figure 6.10.2-1: 
+•	Perception mode a) for specific task locally in robot; and
+•	perception mode b) for general task in open environments via 6G network. 
+ 
+
+Figure 6.10.2-1: Two perception modes of a home robot: (a) perform local perception for specific task, and (b) perform perception for general task in open environments via 6G network
+When a robot is instructed by its owner to start general tasks in an open environment, it will request the perception service for the open environment from the 6G network (e.g. 6G network performing AI inference using the AI/ML models provided by 3rd Party), and, the robot will interact more frequently with the 6G network, which helps ensure safer behaviour through perception services. 
+6.10.3	Service Flows
+1.	One day, while on a shopping trip with Lily and her child, the home robot carried a newly purchased wine glass that Lily had carefully selected. At this time, the robot follows Lily, moves when Lily moves and stops when Lily stops, holding the newly purchased wine glasses. Therefore, it is Perception mode a), and only the local model on the robot is needed to work, as shown in Figure 6.10.3-1(a). However, when an urgent phone call interrupted their outing and Lily tells the robot that she is going to take a call and asks the robot to watch the child. The robot finds that taking care of the child is a general task in an open environment, so it switches to perception mode b), which the robot cannot support locally, as shown in Figure 6.10.3-1(b).
+ 
+
+Figure 6.10.3-1: The robot switches perception mode from perception mode a) to perception mode b) after Lily's instruction 
+2.	Considering the AI service capability supported by network (e.g. inference for perception service) and AI model(s) supported by network, the home robot requests the perception service for general tasks in open environments from the 6G network and frequently sends locally collected important information to the 6G network. The request message includes the perception requirements/demand (e.g. latency, inference accuracy) from the home robot. Then the 6G network determines whether the perception requirements can be satisfied taking UE demand in the request message into account and then sends the response (e.g. acknowledgement including promised requirements) to the home robot.
+3.	 (Perception) The 6G network utilises the sensing data transmitted by the robot, optionally incorporating environmental information from 6G network itself, as input for the model inference (e.g. using the 3rd Party provided AI/ML models). When the 6G network perceives a normal situation, and it will not interrupt robot's current task, as shown in Figure 6.10.3-2 (a); when the 6G network perceives a dangerous situation quickly enough comparable to how an average adult does, such as, the ball suddenly falls from the child's hand and rolls to the side of the road while the child runs to pick up the ball just before a car approaches, it generates corresponding behaviour guidance to send to the robot, as shown in Figure 6.10.3-2 (b).
+ 
+Figure 6.10.3-2: The perception-action loop when a normal situation or dangerous situation is detected by the 6G network, respectively
+4.	The 6G network delivers ACK or the perception result to the home robot within the latency included in step 2.
+5.	 (Action) The robot uses local perception result or perception result from the 6G network, along with the task, as input to the local large model to output action parameters for action. The actions corresponding to a dangerous situation detected by the 6G network may include, for example:
+•	Action 1: Drop the box containing the cup;
+•	Action 2: Move towards the child while emitting an alarm sound;
+•	Action 3: Pick up the child and move to a safe area;
+•	Action 4: Explain to Lily what happened and why the box containing the cup was dropped.
+6.	After executing one or more actions suggested in step 5, the robot assesses the action results. It then reports the service experience (e.g. bad, fair, excellent) along with locally collected environmental data to the network. In this way, the 6G network monitors the performance of the perception service and, if necessary, may upgrade AI model (e.g. by retraining, switching) to guarantee the inference accuracy.
+7.	When at home, Lily plays with her child to draw the picture. Lily starts the robot and requests the robot to execute a GenAI application to generate a picture of scenery of mountains and rivers. But the robot cannot load and execute the full large model due to memory limitation, it sends a request to network and ask for the distributed inference service.
+8.	If the distributed inference service is available, the robot could further negotiate with the network about the inference mode, QoS requirement, etc.
+For example, the robot could ask for layer split inference and provide information including the required inference framework (e.g. pytorch) and model profile (e.g. model structure, number of layers, suggested layers to be offloaded to the network, etc.). In addition, the robot may request certain QoS requirements, e.g. end-to-end latency, which combines transmission and computing processing latency.
+Based on the computing and network resource status, the network may accept the request as it is, or may propose to update some configurations, or even provide its own suggested parameters for the robot to check. For example, in the case of layer split inference, the network may negotiate with the robot or decide by itself about the number of layers to run on the network.
+9.	After finalizing the configurations of the distributed inference service, the network will choose appropriate computing resource in the Service Hosting Environment for running the model segments and fulfil the service requirements, e.g. end-to-end latency.
+10.	The robot could either upload the relevant portion of the split model to the network or provide necessary information for the network to get and load the model. Once both the robot and the network load the model segments, they could conduct the distributed inference service collaboratively.
+11.	Finally, Lily receives the final picture.
+6.10.4	Post-conditions
+If the robot relies solely on local model inference, it may encounter system crashes in overly complex situations. Alternatively, if it only considers executing the previous command from the female owner, it may pose a danger to the child. However, by providing timely perception and action guidance through the 6G network, the requirements for the robot's local intelligence level can be reduced. Users can purchase a robot at a lower price and obtain high-intelligence robot services that can more easily adapt to complex real-world environments.
+6.10.5	Existing features partly or fully covering the use case functionality
+Currently, 3GPP systems only provide communication services, and there is no functionality to provide AI as a service.
+6.10.6	Potential New Requirements needed to support the use case
+[PR 6.10.6-1] Subject to operator's policy, the 6G network shall be able to provide AI service (e.g. AI model inference) to a UE.
+[PR 6.10.6-2] Subject to operator's policy, the 6G system shall be able to support negotiation of the service performance (e.g. latency, inference accuracy), between UE and 6G network, when providing AI service (e.g. AI model inference).
+[PR 6.10.6-3] Subject to operator's policy, the 6G network shall be able to support mechanism to guarantee the service performance (e.g. latency, inference accuracy) when providing AI service (e.g. AI model inference).
+[PR 6.10.6-4] Subject to operator's policy, regulatory requirements and subscriber permission, the 6G network shall support mechanisms for scheduling and provisioning network resources and computing resources in Service Host Environment for distributed AI inference service. 
+[PR 6.10.6-5] Subject to operator's policy, the 6G network shall support mechanisms to ensure a guaranteed service performance of the distributed AI inference service.
+NOTE:	The UE is not involved in distributed AI inference service.
+[PR 6.10.6-6] The 6G system shall be able to provide the communication and AI service for a user with the KPI requirements in Table 6.10.6-1 below.
+Table 6.10.6-1: KPIs for home robot perform perception for general task in open environments via 6G network
+Use case	Traffic type	Average packet size (Byte)	Transfer interval (ms)	Data Rate (Mbps)	Joint E2E latency (ms)
+(NOTE 6)	Reliability
+home robot perceiving overall context of the scene
+(note 5)	UL camera data 
+(note 1)	[<1,000]	[10]	[20-60]
+(note 2)	[150]
+(note 3)	[99.9 %]
+for identifying individual objects in the scene
+(note 5)	UL camera data 
+(note 1)	[<1,000]	[10]	[20-60]
+(note 2)	[200-300]
+(note 4)	[99.9 %]
+NOTE 1:	6 RGB cameras are equipped for robot "Figure 02" [180]. 
+NOTE 2:	20 Mbps is for six 1,080p cameras, and 60 Mbps is for four 1,080p cameras plus two 4K cameras. Data Rate is calculated from video resolution*(Bits per colour*3) *Refresh rate/Compression ratio. Compression ratio of 240 and 8 bits per colour is assumed, thus data rate is around 3 Mbps for 1,080p 15 Hz, and around 24 Mbps for 4K 30Hz. Compression ratio, bits per colour and refresh rate for 1,080 p refers to the similar cases for real time video uploading of a vehicle as per YD/T 4778-2024 (see, in Chinese, https://std.samr.gov.cn/hb/search/stdHBDetailed?id=2001448F0D0D32F5E06397BE0A0AAD9C ). 
+NOTE 3:	Based on psychophysical and neurophysiological studies [281], [282], human beings can perceive the gist (e.g. overall meaning) of complex visual scenes within around 150 ms after stimulus onset. This rapid initial perception enables us to grasp the general context of a scene, even if the stimulus is briefly presented (around 10 ms). 
+NOTE 4:	For human beings, it takes longer for a human being to identify individual objects, e.g. finer object identification requires larger than 200 ms [283] and around 300 ms [284].
+NOTE 5:	In the target scenarios, robots are expected to have similar perception time as an average human being.
+NOTE 6:	Joint E2E latency (i.e. round-trip communication latency, and AI inference latency in Service Hosting Environment), and UE is only considered to contribute to the communication service latency.
+
