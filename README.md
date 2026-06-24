@@ -4,11 +4,18 @@ A small, self-contained **RAG** (Retrieval-Augmented Generation) lab for experim
 
 Use any plain-text document, or try the included samples `input.txt` (short) and `input10.txt` (longer, multi-section).
 
+This project covers two ideas that fit together:
+
+1. **Reranking** — start from a basic RAG pipeline, try simple ways to re-order retrieved chunks (keyword overlap, embeddings, LLM score), and compare quality **before and after**.
+2. **LLM as judge** — give two answers (A vs B) to the same question and let an LLM say which is better and why — a small, reusable evaluation pattern you can apply to other AI systems.
+
+The scope is intentionally narrow: no model training, no vector database, no cloud APIs. You should see whether retrieval improves with modest changes, and which strategy works best for your question.
+
 ---
 
 ## What's new compared to *simple RAG start*?
 
-This project is an evolution of **simple RAG start** — the same beginner-friendly RAG demo, extended with reranking and automatic evaluation. If you used the earlier version, here is what changed and what stayed the same.
+This project is an evolution of **simple RAG start** — the same small RAG demo, extended with reranking and automatic evaluation. If you used the earlier version, here is what changed and what stayed the same.
 
 ### What stayed the same
 
@@ -54,39 +61,7 @@ Document → chunks → embeddings → cosine similarity → top-N candidates
                                                      top-k → LLM answer
 ```
 
-The **embedding-only** strategy reproduces the old behaviour (same ordering as pure cosine similarity), but now runs inside the wider retrieve-then-rerank pipeline. That makes before/after comparisons fair: every strategy starts from the same candidate pool.
-
-### API migration (if you have old scripts)
-
-```python
-# Before (simple RAG start)
-answer, results = rag.query("Which node was selected?", top_k=3)
-for r in results:
-    print(r.score, r.chunk.text)
-
-# Now (simple RAG x5) — embedding strategy is the closest equivalent
-from rag import RerankStrategy
-
-result = rag.query("Which node was selected?", top_k=3, strategy=RerankStrategy.EMBEDDING)
-print(result.answer)
-for r in result.reranked_results:
-    print(r.score, r.chunk.text)
-```
-
-New capabilities not available in the previous version:
-
-```python
-# Compare all strategies on one question
-comparison = rag.compare_strategies("What are the pre-conditions?")
-
-# LLM judge: which strategy gives the better answer?
-verdict = rag.judge_strategies(
-    "Which node was selected?",
-    strategy_a=RerankStrategy.EMBEDDING,
-    strategy_b=RerankStrategy.KEYWORD,
-)
-print(verdict.winner, verdict.reasoning)
-```
+The **embedding-only** strategy keeps pure cosine-similarity ordering, but now runs inside the wider retrieve-then-rerank pipeline. That makes before/after comparisons fair: every strategy starts from the same candidate pool.
 
 ### Why the change?
 
@@ -213,6 +188,8 @@ After changing chunk settings, **reload the Streamlit app** so documents are re-
 | **LLM as judge** | Using an LLM to compare two outputs (A vs B) and pick the better one |
 | **Embedding** | Numeric representation of text meaning, used for initial retrieval |
 | **top-k** | How many chunks are sent to the LLM after reranking (1–10 in the UI) |
+| **LLM** (Large Language Model) | An AI that reads and writes text. Examples: Llama, GPT. Used here to write answers and to judge them. |
+| **Cosine similarity** | A score (0 to 1) measuring how similar two embeddings are. Higher = more relevant chunk. |
 | **Ollama** | Runs AI models locally on your machine |
 
 ---
@@ -258,20 +235,28 @@ streamlit run app.py
 
 Open `http://localhost:8501`.
 
-1. Choose a **source document** (`input.txt`, `input10.txt`, or add your own — see [Customization](#customization)) and configure **Model settings** (Answer LLM, Judge LLM).
-2. Use one of three tabs:
+1. Choose a **source document** (`input.txt`, `input10.txt`, or add your own — see [Customization](#customization)).
+2. Open **Model settings** and pick an **Answer LLM** (and optionally a different **Judge LLM**).
+3. Wait for the green message that chunks are indexed.
+4. Type a question and pick a tab:
 
 ### 1. Single strategy — before / after
 
-Pick one reranking strategy. See the baseline embedding top-k **before** reranking and the final chunks **after** reranking, plus the generated answer.
+Pick one reranking strategy. The left column shows embedding retrieval **before** reranking; the right column shows the same pool **after** reranking. Read the answer below.
+
+This is the quickest way to see whether reranking changed which chunks were selected.
 
 ### 2. Compare all strategies
 
-Run embedding, keyword, and LLM reranking on the same question. Compare answers and retrieved chunks side by side.
+Run embedding, keyword, and LLM reranking on the **same question**. Compare answers and retrieved chunks side by side.
+
+Use this when you want a full picture in one click.
 
 ### 3. LLM judge (A vs B)
 
 Pick two strategies. Each produces an answer from its own reranked chunks. The **Judge LLM** declares the winner and explains why.
+
+Use this when you want an automatic verdict instead of reading every answer yourself.
 
 Adjust **Context chunks (top-k)** up to **10** when you need more passage coverage (more noise if set too high).
 
@@ -313,6 +298,17 @@ simple RAG x5/
 
 ## Using the engine directly
 
+`rag.query()` returns a **`QueryResult`** object:
+
+| Field | Contents |
+|-------|----------|
+| `result.answer` | Text generated by the Answer LLM |
+| `result.reranked_results` | Chunks kept after reranking (these feed the answer) |
+| `result.initial_results` | Top chunks from embedding search alone (before reranking) |
+| `result.strategy` | Which reranking strategy was used |
+
+Each item in `reranked_results` / `initial_results` has `.chunk.text`, `.score`, and `.rank`.
+
 ```python
 from pathlib import Path
 from rag import SimpleRAG, RerankStrategy
@@ -320,28 +316,27 @@ from rag import SimpleRAG, RerankStrategy
 rag = SimpleRAG(Path("input10.txt"))
 rag.load_and_index()
 
-# Single strategy with before/after
 result = rag.query(
     "What are the pre-conditions?",
     top_k=3,
     strategy=RerankStrategy.KEYWORD,
 )
 print(result.answer)
-print("Before:", [r.chunk.index for r in result.initial_results])
-print("After:", [r.chunk.index for r in result.reranked_results])
+for r in result.reranked_results:
+    print(r.rank, r.score, r.chunk.text[:80])
 
-# Compare all strategies
+# Compare all three strategies on one question
 comparison = rag.compare_strategies("Which node was selected?")
 for strategy, res in comparison.items():
     print(strategy.value, "->", res.answer[:80])
 
-# LLM judge (separate judge model optional)
+# LLM judge — optional separate models for answers vs evaluation
 verdict = rag.judge_strategies(
     "Which node was selected?",
     strategy_a=RerankStrategy.EMBEDDING,
     strategy_b=RerankStrategy.LLM,
-    llm_model="llama3.2",      # answers
-    judge_model="gpt-oss",     # evaluator
+    llm_model="llama3.2",
+    judge_model="gpt-oss",
 )
 print(verdict.winner, verdict.reasoning)
 ```
@@ -376,15 +371,43 @@ To add a new reranking strategy, extend `RerankStrategy` and add a branch in `Si
 
 ---
 
-## Learning goals
+## LLM as judge
 
-After working through this project you should be able to:
+The **LLM judge** tab implements a simple A/B evaluation:
 
-1. Start from a working baseline RAG pipeline
-2. Switch between reranking strategies (keyword, embedding, LLM score)
-3. Observe before/after differences in retrieved chunks and answers
-4. Use an LLM judge to compare which strategy works best for a given question
-5. See when simple heuristics are enough — and when an LLM helps
+1. Two reranking strategies each produce an answer to the same question.
+2. A separate LLM reads both answers (without seeing the raw chunks).
+3. It returns a **winner** and a short **reasoning** (factual accuracy, completeness, clarity).
+
+No training or scoring rubric is required — just a plain prompt. You can reuse the same pattern in `rag.py` via `judge_strategies()` for scripts, tests, or other projects.
+
+Try pairing **embedding only** vs **LLM relevance score** on a question where baseline retrieval picks the wrong section — the judge often agrees with what you see in the before/after columns.
+
+---
+
+## What you'll do
+
+| Step | Action |
+|------|--------|
+| 1 | Run the app on `input.txt` or `input10.txt` |
+| 2 | Ask a question with **embedding only** — note the retrieved chunks |
+| 3 | Repeat with **keyword overlap** or **LLM relevance score** — compare before/after |
+| 4 | Open **Compare all strategies** on the same question |
+| 5 | Open **LLM judge** — pit two strategies against each other |
+
+Suggested first question on `input.txt`: *Which computing node was selected and why?*  
+Embedding alone often ranks the wrong chunk first; reranking (especially LLM score) usually fixes it.
+
+---
+
+## What you should take away
+
+- **Clear before/after** — the UI shows exactly which chunks changed, not just a new answer.
+- **Simple heuristics can work** — keyword overlap costs nothing extra and sometimes beats raw embeddings.
+- **LLMs help when heuristics disagree** — LLM reranking and judging add latency but handle harder questions.
+- **A reusable evaluator** — the judge component is independent of the document; swap it into other RAG or agent pipelines.
+
+**Expected result:** a visible improvement in retrieval quality for at least some questions, with little code and no retraining.
 
 ---
 
