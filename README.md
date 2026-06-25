@@ -439,6 +439,116 @@ streamlit run app.py
 
 ---
 
+## Advanced
+
+This section describes how chunks are scored at each stage. All three reranking strategies start from the **same candidate pool** produced by `retrieve()`.
+
+### Step 1 — Initial retrieval (shared by every strategy)
+
+When you ask a question:
+
+1. The question is embedded with `nomic-embed-text` (same model used at index time).
+2. Cosine similarity is computed between the question vector and every chunk vector in the index.
+3. The top `retrieve_k` chunks are kept (default pool size: `max(12, top_k × 2)`).
+
+**Score:** cosine similarity in the range **0–1** (higher = closer in embedding space).
+
+```python
+score = dot(normalize(query_vec), normalize(chunk_vec))
+```
+
+The **before reranking** column in the UI shows the top `top_k` chunks from this step, still using these cosine scores.
+
+Implementation: `SimpleRAG.retrieve()` and `_cosine_similarity()` in `rag.py`.
+
+---
+
+### Step 2 — Reranking (strategy-specific)
+
+Reranking only re-orders the candidate pool. It does **not** search the full document again. The top `top_k` chunks after reranking are sent to the Answer LLM.
+
+The **score** shown in the UI after reranking depends on which strategy you picked — the number is not always comparable across strategies.
+
+#### Embedding only (baseline)
+
+**What it does:** Sorts the candidate pool by the **original cosine scores** from step 1. No new scoring.
+
+**Score shown:** cosine similarity (0–1), unchanged from retrieval.
+
+**When order changes vs step 1:** It does not — only the slice length changes (`retrieve_k` candidates narrowed to `top_k`). Use this as the baseline to see what reranking *adds*.
+
+---
+
+#### Keyword overlap
+
+**What it does:** Replaces each chunk’s cosine score with a simple word-count check: *how many words from the question also appear in this chunk?*
+
+**Step by step:**
+
+1. **Split into words** — Take the question and the chunk, turn them lowercase, and split on word boundaries (same idea as `Which` → `which`, `node` → `node`; punctuation is ignored).
+2. **List unique question words** — Duplicates count once. *"Which node was selected?"* → `which`, `node`, `was`, `selected` (4 words).
+3. **Count matches** — For each chunk, count how many of those question words appear anywhere in the chunk text.
+4. **Compute score** — `matches ÷ question words`. Result is between **0** (no overlap) and **1** (every question word appears in the chunk).
+
+**Worked example:**
+
+| | Words |
+|---|-------|
+| Question | `which`, `node`, `was`, `selected` → **4 words** |
+| Chunk A contains | `node`, `selected` → **2 matches** → score **2 ÷ 4 = 0.5** |
+| Chunk B contains | `node` only → **1 match** → score **1 ÷ 4 = 0.25** |
+
+Chunk A ranks above Chunk B because more of the question’s vocabulary appears in it.
+
+**Score shown in the UI:** **0–1** (a proportion, not cosine similarity).
+
+**Limits:** Each word is treated independently — no synonyms, no stemming (`running` ≠ `run`), no phrase matching (`"Node A"` is just `node` and `a`). Fast and predictable; useful when the question names specific terms or section labels.
+
+Implementation: `keyword_overlap_score()` in `rag.py`.
+
+---
+
+#### LLM relevance score
+
+**What it does:** Sends the question and **all candidates** (numbered `[1]`, `[2]`, …) to the Answer LLM in one prompt. The model returns a relevance score per chunk.
+
+**Prompt asks for:** JSON array of `{"chunk_id": <1-based index>, "score": <0–10>}` for every chunk.
+
+**Score shown:** **0–10** (model-assigned relevance).
+
+**Parsing:** The code extracts JSON from the response. If parsing fails, it falls back to line-by-line pattern matching; if that also fails, it assigns descending placeholder scores so the pipeline still returns a result.
+
+**Cost:** One LLM call per query (per strategy use). Slower than embedding or keyword, but can judge context and intent beyond token overlap.
+
+Implementation: `llm_rerank()` and `_parse_llm_scores()` in `rag.py`.
+
+---
+
+### Comparing scores in the UI
+
+| Strategy | Score range | Same as “before reranking”? |
+|----------|-------------|------------------------------|
+| Embedding only | 0–1 (cosine) | Yes |
+| Keyword overlap | 0–1 (term fraction) | No — new metric |
+| LLM relevance | 0–10 (model judgment) | No — new metric |
+
+Do not compare raw numbers across strategies (e.g. `0.67` cosine vs `0.67` keyword vs `7.0` LLM). Compare **which chunks were selected** and **whether the answer improved**.
+
+---
+
+### LLM judge (separate from reranking)
+
+The judge does **not** score chunks. It compares two **finished answers** (from two reranking strategies) and returns:
+
+- `winner` — label of strategy A, strategy B, or tie
+- `reasoning` — short explanation
+
+Criteria in the prompt: factual accuracy, completeness, grounding, clarity. Uses the **Judge LLM** (can differ from the Answer LLM).
+
+Implementation: `llm_judge()` and `judge_strategies()` in `rag.py`.
+
+---
+
 ## License
 
 Use and modify this project freely.
